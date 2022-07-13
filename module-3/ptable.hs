@@ -2,7 +2,7 @@ data Events = Events [String]
 data Probs = Probs [Double]
 
 combineEvents :: Events -> Events -> Events
-combineEvents (Events e1) (Events e2) = Events (cartCombine combiner e1 e2)
+combineEvents (Events e1) (Events e2) = Events $ cartCombine combiner e1 e2
   where combiner = (\x y -> mconcat [x, "-", y])
 
 instance Semigroup Events where
@@ -12,7 +12,7 @@ instance Monoid Events where
     mempty = Events []
 
 combineProbs :: Probs -> Probs -> Probs
-combineProbs (Probs p1) (Probs p2) = Probs (cartCombine (*) p1 p2)
+combineProbs (Probs p1) (Probs p2) = Probs $ cartCombine (*) p1 p2
 
 instance Semigroup Probs where
     (<>) = combineProbs
@@ -27,7 +27,8 @@ data PTable = PTable Events Probs
 createPTable :: Events -> Probs -> PTable
 createPTable events (Probs probs) = PTable events normalizedProbs
   where totalProbs = sum probs
-        normalizedProbs = Probs (map (\x -> x / totalProbs) probs)
+        normalizedProbs = Probs $ map (/ totalProbs) probs
+        --normalizedProbs = Probs (map (\x -> x / totalProbs) probs)
 
 instance Show PTable where
     show (PTable (Events events) (Probs probs)) = mconcat pairs
