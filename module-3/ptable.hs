@@ -1,9 +1,9 @@
-data Events = Events [String]
-data Probs = Probs [Double]
+newtype Events = Events [String]
+newtype Probs = Probs [Double]
 
 combineEvents :: Events -> Events -> Events
 combineEvents (Events e1) (Events e2) = Events $ cartCombine combiner e1 e2
-  where combiner = (\x y -> mconcat [x, "-", y])
+  where combiner = \x y -> mconcat [x, "-", y]
 
 instance Semigroup Events where
     (<>) = combineEvents
@@ -49,7 +49,7 @@ instance Monoid PTable where
 showPair :: String -> Double -> String
 showPair event prob = mconcat [event, "|", show (prob * 100), "%\n"]
 
-cartCombine :: (a -> b -> c) -> [a] -> [b] -> [c] 
+cartCombine :: (a -> b -> c) -> [a] -> [b] -> [c]
 cartCombine func l1 l2 = zipWith func newL1 cycledL2
   where nToAdd = length l2
         repeatedL1 = map (take nToAdd . repeat) l1

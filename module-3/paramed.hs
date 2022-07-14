@@ -7,6 +7,22 @@ wrap = Box
 unwrap :: Box a -> a
 unwrap (Box x) = x
 
+--boxMap :: Box a => (a -> b) -> [a] -> [b]
+--boxMap _ [] = []
+--boxMap f (x : xs) = Box (f x) : xs
+
+--boxMap :: (a -> b) -> Box a -> Box b
+--boxMap f (Box b) = Box (f b)
+
+boxMap :: (a -> b) -> [Box a] -> [Box b]
+boxMap _ [] = []
+boxMap f (Box x : xs) = Box (f x) : boxMap f xs
+
+tripleMap :: (a -> b) -> [Triple a] -> [Triple b]
+tripleMap _ [] = []
+tripleMap f (Triple x y z : xs) =
+    Triple (f x) (f y) (f z) : tripleMap f xs
+
 data Triple a = Triple a a a deriving Show
 
 first :: Triple a -> a
