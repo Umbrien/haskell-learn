@@ -4,7 +4,7 @@ import qualified Data.Map as Map
 helloPerson :: String -> String
 helloPerson name = "Hi, " ++ name ++ "!"
 
-main :: IO()
+main :: IO ()
 main = do
     putStrLn "What's your name?"
     name <- getLine

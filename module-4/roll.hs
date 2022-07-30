@@ -1,4 +1,9 @@
-import System.Random
+import System.Random (randomRIO)
+
+{-
+- to install random module:
+- cabal install --lib --package-env . random
+-}
 
 minDie :: Int
 minDie = 1
