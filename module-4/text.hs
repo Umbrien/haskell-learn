@@ -1,10 +1,11 @@
 {-# LANGUAGE OverloadedStrings #-}
-import qualified Data.Text as T
+import qualified Data.Text as T -- or Data.Text.Lazy
 import Data.Semigroup
 
 firstWord :: String
 firstWord = "miui"
 
+-- pack & unpack are expensive operations
 secondWord :: T.Text
 secondWord = T.pack firstWord
 
