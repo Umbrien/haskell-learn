@@ -62,6 +62,7 @@ initials = Triple 'H' 'P' 'L'
 --data List a = Empty | Cons a (List a) deriving Show
 --ourIntList = Cons 1 $ Cons 2 $ Cons 3 Empty
 
+-- infixr defines operator order for new operator :::
 infixr 5 :::
 data List a = Empty | a ::: (List a) deriving Show
 
