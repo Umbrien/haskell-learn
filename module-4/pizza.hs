@@ -1,14 +1,14 @@
 import qualified Data.Map as Map
 
 
-areaGivenDiameter :: Double -> Double
-areaGivenDiameter size = pi * radius ^ 2
-  where radius = size / 2
+areaByDiameter :: Double -> Double
+areaByDiameter diameter = pi * radius ^ 2
+  where radius = diameter / 2
 
 type Pizza = (Double, Double)
 
 costPerCm :: Pizza -> Double
-costPerCm (size, cost) = cost / areaGivenDiameter size
+costPerCm (size, cost) = cost / areaByDiameter size
 
 comparePizzas :: Pizza -> Pizza -> Pizza
 comparePizzas p1 p2 = if costP1 < costP2
