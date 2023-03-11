@@ -57,3 +57,5 @@ maybeMain = do
     let betterPizza = comparePizzas pizza1 pizza2
     return $ describePizza betterPizza
 
+-- with return, String becomes Maybe String (type of do notation)
+
