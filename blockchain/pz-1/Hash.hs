@@ -4,7 +4,9 @@ import qualified Crypto.Hash.SHA256 as SHA256
 import qualified Data.ByteString.Char8 as BC
 import qualified Data.ByteString.Base16 as B16
 
-hash :: String -> String
+type Hash = String
+
+hash :: String -> Hash
 hash input = hexhash
     where
         inputByteString = BC.pack input

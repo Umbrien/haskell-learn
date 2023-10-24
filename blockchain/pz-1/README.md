@@ -2,7 +2,9 @@
 
 - As of development time, there is single-node architecture. I hope it will change to decentralised
 
-- Proof of Work realisation: biggest proposed number wins
+- No transaction signatures
+
+- Proof of Work realisation: nonce is proof: unique number, which if added to block contents, will give beautiful hash (starting with n 0s)
 
 - At the end of the block, miner includes transaction to himself with author 0x000 with a sum of gas from prev transactions or less, then it will be burnt
 
