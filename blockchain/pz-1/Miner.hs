@@ -4,12 +4,8 @@ import Hash (Hash)
 import DataStructures (Block(..))
 import Helpers (blockHash)
 
-
-blockHashByNonce :: Block -> Int -> Hash
-blockHashByNonce (Block index transactions _ previousHash timeStamp) n = blockHash Block {
-    index = index
-    , transactions = transactions
-    , nonce = n
-    , previousHash = previousHash
-    , timeStamp = timeStamp
-}
+testNonce :: Int -> String
+testNonce nonce = blockHash Block { previousHash = "0"
+                                  , timeStamp = 0
+                                  , nonce = nonce
+                                  , transactions = [] }

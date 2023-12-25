@@ -20,3 +20,9 @@
 - For smart contract transactions: miner will pick w/ highest gas, gas will be spent on contract execution + miner fee
 
 - Vulnerability: miners will pick contract executions only as there may be higher gas due to execution? this may cause transfers with high fee?
+
+## Todo
+
+- Mempool or Transaction Pool
+
+- Function to calculate balance. It will include all transactions, fees (both sides - minus for user, plus for miner), coinbases

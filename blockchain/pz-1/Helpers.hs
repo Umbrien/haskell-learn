@@ -1,29 +1,44 @@
 module Helpers where
 
 import Hash (Hash, hash)
-import DataStructures (Block(..), Blockchain, difficulty)
+import DataStructures (Transaction(..), TransactionType(..), Block(..), Blockchain, difficulty, coinbaseReward)
 
 isHashDifficultyValid :: Hash -> Bool
 isHashDifficultyValid h = take difficulty h == take difficulty (repeat '0')
 
 blockHash :: Block -> Hash
-blockHash (Block index transactions nonce previousHash timeStamp) = hash nonceAndBlockHash
-    where
-        blockContentsHash = hash $ show index ++ show transactions ++ show previousHash ++ show timeStamp
-        nonceAndBlockHash = hash $ show nonce ++ blockContentsHash
+blockHash = hash . show
 
--- todo check if transaction is valid:
+-- Check if there's only one Coinbase and it's the first transaction
+isCoinbasePlacedValid :: [TransactionType] -> Bool
+isCoinbasePlacedValid [] = False
+isCoinbasePlacedValid (Coinbase _ : xs) = noCoinbase xs
+    where
+        noCoinbase :: [TransactionType] -> Bool
+        noCoinbase [] = True
+        noCoinbase (Coinbase _ : _) = False
+        noCoinbase (_ : xxs) = noCoinbase xxs
+isCoinbasePlacedValid _ = False
+
+isCoinbaseRewardFair :: TransactionType -> Bool
+isCoinbaseRewardFair (Coinbase reward) = reward == coinbaseReward
+isCoinbaseRewardFair _ = False
+
+-- todo check more conditions:
 -- - sender balance is enough for gas + (if Transaction is Transfer, then + amount)
--- - if multiple transactions from one sender in the same block, make sure it will work as should: user cannot fool system and use his balance twice
--- - last miner Transaction is Transfer with amount equal to all fees
-isBlockValid :: ([Block], Block) -> Bool
-isBlockValid ([], _) = True -- or not just True if other uslovia below?
-isBlockValid (blockchain, block) = and [isNonceUnique, isNonceValid] -- todo more uslovia??
+-- - if multiple transactions from one sender in the same block, make sure it will work as should: user cannot fool system and use his balance twice (double spending)
+isBlockValid :: (Blockchain, Block) -> Bool
+isBlockValid ([], _) = True -- genesis block is valid
+isBlockValid (blockchain, block) = and [isNonceUnique, isNonceValid, isCoinbaseValid]
     where
         existingProofs = map nonce blockchain
         isNonceUnique = all (\a -> not $ a == nonce block) existingProofs
         isNonceValid = isHashDifficultyValid $ blockHash block
-        -- isMinerTransactionValid = and [ ]
+        --
+        txBodies = map (\t -> body t) $ transactions block
+        isCoinbaseValid = and [
+            isCoinbasePlacedValid txBodies
+            , isCoinbaseRewardFair $ head txBodies ]
 
 addBlock :: Blockchain -> [Block] -> Blockchain
 addBlock blockchain blocks = blockchain ++ [approvedBlock]

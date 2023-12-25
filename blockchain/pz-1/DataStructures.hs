@@ -2,29 +2,24 @@ module DataStructures where
 
 type Address = String
 
-data TransactionType = Transfer {
-    to :: Address
-    , amount :: Float
-} | SmartContractCall {
-    contract :: Address
-    , meta :: String
-} deriving Show
+data TransactionType =
+    Transfer { to :: Address , amount :: Float }
+    | SmartContractCall { contract :: Address , meta :: String }
+    | Coinbase { reward :: Float } deriving Show
 
-data Transaction = Transaction {
-    author :: Address
-    , gas :: Float
-    , body :: TransactionType
-} deriving Show
+data Transaction = Transaction { author :: Address
+                               , gas :: Float
+                               , body :: TransactionType } deriving Show
 
-data Block = Block {
-    index :: Int
-    , transactions :: [Transaction]
-    , nonce :: Int
-    , previousHash :: String
-    , timeStamp :: Int
-} deriving Show
+data Block = Block { previousHash :: String
+                   , timeStamp :: Int
+                   , nonce :: Int
+                   , transactions :: [Transaction] } deriving Show
 
 type Blockchain = [Block]
 
 difficulty :: Int
 difficulty = 1
+
+coinbaseReward :: Float
+coinbaseReward = 25
