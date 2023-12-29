@@ -1,5 +1,5 @@
 import DataStructures (Address, TransactionType(..), Transaction(..), Block(..), Blockchain)
-import Helpers (blockHash)
+import Helpers (blockHash, balance)
 
 alice :: Address
 alice = "alice.near"
@@ -34,15 +34,22 @@ chain = [genesisBlock]
 
 main :: IO ()
 main = do
-    putStrLn "Hello, Haskell!"
+    print $ "alice balance: " ++ (show $ balance chain alice)
+    print $ "bob balance: " ++ (show $ balance chain bob)
 
     let payForPizza = Transaction { author = alice
                                   , gas = 1
                                   , body = Transfer {to = bob, amount = 10000} }
 
-    let pizzaBlock = Block { previousHash = blockHash genesisBlock
-                           , timeStamp = 0
-                           , nonce = 0
-                           , transactions = [payForPizza] }
+    let pizzaCoinbase = Transaction { author = miner
+                                    , gas = 0
+                                    , body = Coinbase {reward = 25} }
 
-    print pizzaBlock
+    let pizzaBlock = Block { previousHash = blockHash genesisBlock
+                           , timeStamp = 1
+                           , nonce = 0
+                           , transactions = [pizzaCoinbase, payForPizza] }
+
+    -- todo use addBlock function instead
+    let pizzaChain = chain ++ [pizzaBlock]
+    print $ "alice balance: " ++ (show $ balance pizzaChain alice)

@@ -6,10 +6,11 @@
 
 - Proof of Work realisation: nonce is proof: unique number, which if added to block contents, will give beautiful hash (starting with n 0s)
 
-- At the end of the block, miner includes transaction to himself with author 0x000 with a sum of gas from prev transactions or less, then it will be burnt
-
 - Genesis block generates some balance out of nowhere for demo purposes
-  as well as does not include last block for miner as there are no miners???
+
+# What already exists
+
+- Coinbase validation: check if it is the first transaction in a block and there is only one coinbase transaction in a block
 
 ## How it will work for user
 
@@ -19,10 +20,16 @@
 
 - For smart contract transactions: miner will pick w/ highest gas, gas will be spent on contract execution + miner fee
 
-- Vulnerability: miners will pick contract executions only as there may be higher gas due to execution? this may cause transfers with high fee?
+- Vulnerability: miners will pick contract executions only as there may be higher gas due to execution. this may cause transfers with high fee.
 
 ## Todo
 
 - Mempool or Transaction Pool
 
-- Function to calculate balance. It will include all transactions, fees (both sides - minus for user, plus for miner), coinbases
+- Update function to calculate balance to work for miner
+- Update coinbase transaction to include fixed block reward + transaction blocks fees
+- Make a coinbase creation function in Miner module. include reward + fees
+
+- Check hash when validating block, remove nonce unique validation, makeIsBlockBalid to accept last block instead of whole blockchain
+
+- beautiful Show instance for Blockchain

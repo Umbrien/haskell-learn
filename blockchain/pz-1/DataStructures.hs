@@ -1,5 +1,7 @@
 module DataStructures where
 
+import Hash (Hash)
+
 type Address = String
 
 data TransactionType =
@@ -11,7 +13,7 @@ data Transaction = Transaction { author :: Address
                                , gas :: Float
                                , body :: TransactionType } deriving Show
 
-data Block = Block { previousHash :: String
+data Block = Block { previousHash :: Hash
                    , timeStamp :: Int
                    , nonce :: Int
                    , transactions :: [Transaction] } deriving Show
