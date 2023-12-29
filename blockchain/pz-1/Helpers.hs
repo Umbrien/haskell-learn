@@ -64,8 +64,8 @@ balance blockchain address = toAddressTransfersSum + transactionEffects
     blockchainTransactions = foldl (\acc b -> acc ++ transactions b) [] blockchain
     toAddressTransfersSum = foldl (\acc curr -> acc + amount curr) 0 toAddressTransfers
       where
-        toAddressTransfers = filter (\t -> isTransferToAddress t) transationBodies
-        transationBodies = map (\t -> body t) blockchainTransactions
+        toAddressTransfers = filter (\t -> isTransferToAddress t) transactionBodies
+        transactionBodies = map (\t -> body t) blockchainTransactions
         isTransferToAddress :: TransactionType -> Bool
         isTransferToAddress (Transfer to _) = to == address
         isTransferToAddress _ = False

@@ -1,5 +1,6 @@
 import DataStructures (Address, TransactionType(..), Transaction(..), Block(..), Blockchain)
-import Helpers (blockHash, balance)
+import Helpers (blockHash, balance, addBlock)
+import Miner (createBlock)
 
 alice :: Address
 alice = "alice.near"
@@ -26,7 +27,7 @@ topUpBob = Transaction { author = burn
 genesisBlock :: Block
 genesisBlock = Block { previousHash = "0"
                      , timeStamp = 0
-                     , nonce = 0
+                     , nonce = 29459
                      , transactions = [topUpAlice, topUpBob] }
 
 chain :: Blockchain
@@ -41,15 +42,12 @@ main = do
                                   , gas = 1
                                   , body = Transfer {to = bob, amount = 10000} }
 
-    let pizzaCoinbase = Transaction { author = miner
-                                    , gas = 0
-                                    , body = Coinbase {reward = 25} }
+    let pizzaBlock = createBlock (blockHash genesisBlock) miner [payForPizza]
+    print pizzaBlock
+    print $ blockHash pizzaBlock
 
-    let pizzaBlock = Block { previousHash = blockHash genesisBlock
-                           , timeStamp = 1
-                           , nonce = 0
-                           , transactions = [pizzaCoinbase, payForPizza] }
-
-    -- todo use addBlock function instead
-    let pizzaChain = chain ++ [pizzaBlock]
+    let pizzaChain = addBlock chain [pizzaBlock]
+    print pizzaChain
     print $ "alice balance: " ++ (show $ balance pizzaChain alice)
+    print $ "bob balance: " ++ (show $ balance pizzaChain bob)
+    print $ "miner balance: " ++ (show $ balance pizzaChain miner)

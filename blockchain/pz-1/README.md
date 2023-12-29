@@ -27,7 +27,6 @@
 
 - Mempool or Transaction Pool
 
-- Update function to calculate balance to work for miner
-- replace testNonce with findNonce
-
 - beautiful Show instance for Blockchain
+
+- Timestamp is always 0 but it can be changed to find beautiful hash faster without affecting the system
