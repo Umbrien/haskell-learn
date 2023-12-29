@@ -23,5 +23,5 @@ type Blockchain = [Block]
 difficulty :: Int
 difficulty = 1
 
-coinbaseReward :: Float
-coinbaseReward = 25
+blockReward :: Float
+blockReward = 25

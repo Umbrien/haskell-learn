@@ -11,7 +11,7 @@
 
 # What already exists
 
-- Coinbase validation: check if it is the first transaction in a block and there is only one coinbase transaction in a block
+- Coinbase validation: check if it is the first transaction in a block and there is only one coinbase transaction in a block. Coinbase reward is fixed blockReward + block transaction fees
 
 ## How it will work for user
 
@@ -28,7 +28,6 @@
 - Mempool or Transaction Pool
 
 - Update function to calculate balance to work for miner
-- Update coinbase transaction to include fixed block reward + transaction blocks fees
-- Make a coinbase creation function in Miner module. include reward + fees
+- replace testNonce with findNonce
 
 - beautiful Show instance for Blockchain

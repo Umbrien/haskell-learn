@@ -1,8 +1,7 @@
 module Miner where
 
-import Hash (Hash)
-import DataStructures (Block(..), Transaction(..), TransactionType(..))
-import Helpers (blockHash)
+import DataStructures (Block(..), Transaction(..), TransactionType(..), Address)
+import Helpers (coinbaseReward, blockHash)
 
 testNonce :: Int -> String
 testNonce nonce = blockHash Block { previousHash = "0"
@@ -10,5 +9,8 @@ testNonce nonce = blockHash Block { previousHash = "0"
                                   , nonce = nonce
                                   , transactions = [] }
 
--- make Coinbase transaction
--- coinbaseTransaction :: [Transaction] -> Transaction
+coinbaseTransaction :: Address -> [Transaction] -> Transaction
+coinbaseTransaction minerAddress transactions =
+    Transaction { author = minerAddress
+                , gas = 0
+                , body = Coinbase { reward = coinbaseReward transactions } }

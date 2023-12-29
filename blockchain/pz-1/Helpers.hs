@@ -1,13 +1,19 @@
 module Helpers where
 
 import Hash (Hash, hash)
-import DataStructures (Address, Transaction(..), TransactionType(..), Block(..), Blockchain, difficulty, coinbaseReward)
+import DataStructures (Address, Transaction(..), TransactionType(..), Block(..), Blockchain, difficulty, blockReward)
 
 hashDifficultyValid :: Hash -> Bool
 hashDifficultyValid h = take difficulty h == take difficulty (repeat '0')
 
 blockHash :: Block -> Hash
 blockHash = hash . show
+
+coinbaseReward :: [Transaction] -> Float
+coinbaseReward transactions = blockReward + transactionsGasSum transactions
+  where
+    transactionsGasSum :: [Transaction] -> Float
+    transactionsGasSum = sum . map (\(Transaction _ gas _) -> gas)
 
 -- Check if there's only one Coinbase and it's the first transaction
 isCoinbasePlacedValid :: [TransactionType] -> Bool
@@ -20,8 +26,8 @@ isCoinbasePlacedValid (Coinbase _ : xs) = noCoinbase xs
     noCoinbase (_ : xxs) = noCoinbase xxs
 isCoinbasePlacedValid _ = False
 
-isCoinbaseRewardFair :: TransactionType -> Bool
-isCoinbaseRewardFair (Coinbase reward) = reward == coinbaseReward
+isCoinbaseRewardFair :: [Transaction] -> Bool
+isCoinbaseRewardFair (Transaction _ _ (Coinbase reward):restTransactions) = reward == coinbaseReward restTransactions
 isCoinbaseRewardFair _ = False
 
 -- isNewBlockValid is function for validating new blocks. As system assumes that genesis block is valid, it should not be used with genesis block.
@@ -38,7 +44,7 @@ isNewBlockValid previousBlock block = and [isNonceValid, isCoinbaseValid]
     txBodies = map (\t -> body t) $ transactions block
     isCoinbaseValid = and [
         isCoinbasePlacedValid txBodies
-        , isCoinbaseRewardFair $ head txBodies]
+        , isCoinbaseRewardFair $ transactions block]
 
 addBlock :: Blockchain -> [Block] -> Blockchain
 addBlock blockchain blocks = case approvedBlock of
