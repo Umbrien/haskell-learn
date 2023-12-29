@@ -3,8 +3,8 @@ module Helpers where
 import Hash (Hash, hash)
 import DataStructures (Address, Transaction(..), TransactionType(..), Block(..), Blockchain, difficulty, coinbaseReward)
 
-isHashDifficultyValid :: Hash -> Bool
-isHashDifficultyValid h = take difficulty h == take difficulty (repeat '0')
+hashDifficultyValid :: Hash -> Bool
+hashDifficultyValid h = take difficulty h == take difficulty (repeat '0')
 
 blockHash :: Block -> Hash
 blockHash = hash . show
@@ -24,17 +24,16 @@ isCoinbaseRewardFair :: TransactionType -> Bool
 isCoinbaseRewardFair (Coinbase reward) = reward == coinbaseReward
 isCoinbaseRewardFair _ = False
 
+-- isNewBlockValid is function for validating new blocks. As system assumes that genesis block is valid, it should not be used with genesis block.
 -- todo check more conditions:
 -- - sender balance is enough for gas + (if Transaction is Transfer, then + amount)
 -- - if multiple transactions from one sender in the same block, make sure it will work as should: user cannot fool system and use his balance twice (double spending)
--- - validate hashes are correct through isNonceValid
-isBlockValid :: (Blockchain, Block) -> Bool
-isBlockValid ([], _) = True -- genesis block is valid
-isBlockValid (blockchain, block) = and [isNonceUnique, isNonceValid, isCoinbaseValid]
+isNewBlockValid :: Block -> Block -> Bool
+isNewBlockValid previousBlock block = and [isNonceValid, isCoinbaseValid]
   where
-    existingProofs = map nonce blockchain
-    isNonceUnique = all (\a -> not $ a == nonce block) existingProofs
-    isNonceValid = isHashDifficultyValid $ blockHash block
+    isNonceValid = and [isHashDifficultyValid, isHashValid ]
+    isHashDifficultyValid = hashDifficultyValid $ blockHash block
+    isHashValid = blockHash previousBlock == previousHash block
     --
     txBodies = map (\t -> body t) $ transactions block
     isCoinbaseValid = and [
@@ -46,7 +45,7 @@ addBlock blockchain blocks = case approvedBlock of
     Just block -> blockchain ++ [block]
     Nothing -> blockchain
   where
-    validBlocks = filter (\bs -> isBlockValid (blockchain, bs)) blocks
+    validBlocks = filter (\bs -> isNewBlockValid (last blockchain) bs) blocks
     greatestProof = foldl (\acc curr -> max acc (nonce curr)) 0 blocks
     approvedBlock :: Maybe Block
     approvedBlock = case filter (\b -> nonce b == greatestProof) validBlocks of

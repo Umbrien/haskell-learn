@@ -7,6 +7,7 @@
 - Proof of Work realisation: nonce is proof: unique number, which if added to block contents, will give beautiful hash (starting with n 0s)
 
 - Genesis block generates some balance out of nowhere for demo purposes
+- Genesis block is considered valid, validating occurs to blocks that come after it
 
 # What already exists
 
@@ -29,7 +30,5 @@
 - Update function to calculate balance to work for miner
 - Update coinbase transaction to include fixed block reward + transaction blocks fees
 - Make a coinbase creation function in Miner module. include reward + fees
-
-- Check hash when validating block, remove nonce unique validation, makeIsBlockBalid to accept last block instead of whole blockchain
 
 - beautiful Show instance for Blockchain
