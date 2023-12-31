@@ -42,7 +42,11 @@ main = do
                                   , gas = 1
                                   , body = Transfer {to = bob, amount = 10000} }
 
-    let pizzaBlock = createBlock (blockHash genesisBlock) miner [payForPizza]
+    let callCastledice = Transaction { author = alice
+                                     , gas = 100
+                                     , body = SmartContractCall {contract = "castledice.near", meta = "roll 100"} }
+
+    let pizzaBlock = createBlock (blockHash genesisBlock) miner [payForPizza, callCastledice]
     print pizzaBlock
     print $ blockHash pizzaBlock
 
