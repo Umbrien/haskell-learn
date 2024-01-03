@@ -27,6 +27,15 @@
 
 - Mempool or Transaction Pool
 
-- beautiful Show instance for Blockchain
-
 - Timestamp is always 0 but it can be changed to find beautiful hash faster without affecting the system
+
+- add isBalanceEnough validation (probably in isNewBlockValid)
+  here is draft implementation that works only in case of sending currency
+
+```haskell
+    -- check if sender balance is enough (includes double spending check)
+    isBalancesEnough = all (\t -> isAddressBalanceEnough $ author t) $ transactions block
+    isAddressBalanceEnough address = (balanceBeforeBlock address - blockTxsEffect address) >= 0 --todo: fix
+    balanceBeforeBlock = balance blockchain
+    blockTxsEffect address = txsEffect address $ transactions block
+```

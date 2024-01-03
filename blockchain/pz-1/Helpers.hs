@@ -30,16 +30,14 @@ isCoinbaseRewardFair :: [Transaction] -> Bool
 isCoinbaseRewardFair (Transaction _ _ (Coinbase reward):restTransactions) = reward == coinbaseReward restTransactions
 isCoinbaseRewardFair _ = False
 
--- isNewBlockValid is function for validating new blocks. As system assumes that genesis block is valid, it should not be used with genesis block.
--- todo check more conditions:
--- - sender balance is enough for gas + (if Transaction is Transfer, then + amount)
--- - if multiple transactions from one sender in the same block, make sure it will work as should: user cannot fool system and use his balance twice (double spending)
-isNewBlockValid :: Block -> Block -> Bool
-isNewBlockValid previousBlock block = and [isNonceValid, isCoinbaseValid]
+-- Function for validating new blocks.
+-- As system assumes that genesis block is valid, it should not be used with genesis block.
+isNewBlockValid :: Blockchain -> Block -> Bool
+isNewBlockValid blockchain block = and [isNonceValid, isCoinbaseValid]
   where
     isNonceValid = and [isHashDifficultyValid, isHashValid ]
     isHashDifficultyValid = hashDifficultyValid $ blockHash block
-    isHashValid = blockHash previousBlock == previousHash block
+    isHashValid = blockHash (last blockchain) == previousHash block
     --
     txBodies = map (\t -> body t) $ transactions block
     isCoinbaseValid = and [
@@ -51,7 +49,7 @@ addBlock blockchain blocks = case approvedBlock of
     Just block -> blockchain ++ [block]
     Nothing -> blockchain
   where
-    validBlocks = filter (\bs -> isNewBlockValid (last blockchain) bs) blocks
+    validBlocks = filter (\bs -> isNewBlockValid blockchain bs) blocks
     greatestProof = foldl (\acc curr -> max acc (nonce curr)) 0 blocks
     approvedBlock :: Maybe Block
     approvedBlock = case filter (\b -> nonce b == greatestProof) validBlocks of
@@ -59,20 +57,22 @@ addBlock blockchain blocks = case approvedBlock of
         [] -> Nothing
 
 balance :: Blockchain -> Address -> Float
-balance blockchain address = toAddressTransfersSum + transactionEffects
+balance blockchain address = txsEffect address blockchainTransactions
   where
     blockchainTransactions = foldl (\acc b -> acc ++ transactions b) [] blockchain
-    toAddressTransfersSum = foldl (\acc curr -> acc + amount curr) 0 toAddressTransfers
-      where
-        toAddressTransfers = filter (\t -> isTransferToAddress t) transactionBodies
-        transactionBodies = map (\t -> body t) blockchainTransactions
-        isTransferToAddress :: TransactionType -> Bool
-        isTransferToAddress (Transfer to _) = to == address
-        isTransferToAddress _ = False
-    transactionEffects = foldl (\acc tx -> acc + transactionEffect tx) 0 addressAuthoredTransactions
-      where
-        addressAuthoredTransactions = filter (\t -> author t == address) blockchainTransactions
-        transactionEffect :: Transaction -> Float
-        transactionEffect (Transaction _ _ (Coinbase reward)) = reward
-        transactionEffect (Transaction _ gas (Transfer _ amount)) = -amount - gas
-        transactionEffect (Transaction _ gas (SmartContractCall _ _)) = -gas
+
+txEffect :: Address -> Transaction -> Float
+txEffect address (Transaction author gas (Transfer to amount))
+ | author == address && to == address = -gas
+ | author == address = -amount - gas
+ | to == address = amount
+ | otherwise = 0
+txEffect address (Transaction author gas (SmartContractCall _ _))
+ | author == address = -gas
+ | otherwise = 0
+txEffect address (Transaction author _ (Coinbase reward))
+ | author == address = reward
+ | otherwise = 0
+
+txsEffect :: Address -> [Transaction] -> Float
+txsEffect address = sum . map (\t -> txEffect address t)
