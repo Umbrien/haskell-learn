@@ -1,0 +1,4 @@
+name: module4
+version: 0.1
+build-depends: base >=4.7 && <5
+             , containers >=0.6.7 && <0.8

@@ -9,5 +9,3 @@ main = do
   args <- getArgs
   let filesToRemove = concatMap genFileVariants args
   mapM_ removeFile filesToRemove
-
--- print filesToRemove
