@@ -145,3 +145,21 @@ main = do
   partNo <- getLine
   let part = Map.lookup (read partNo) partsDB
   printCost $ cost <$> part
+
+getCheaperPart :: RobotPart -> RobotPart -> RobotPart
+getCheaperPart a b = if minCost == cost a then a else b
+  where
+    minCost = min (cost a) (cost b)
+
+printMaybePart :: Maybe RobotPart -> IO ()
+printMaybePart Nothing = putStrLn "Part ID not found"
+printMaybePart (Just part) = print part
+
+mainA :: IO ()
+mainA = do
+  inputIDa <- read <$> getLine
+  inputIDb <- read <$> getLine
+  let partA = Map.lookup inputIDa partsDB
+  let partB = Map.lookup inputIDb partsDB
+  let cheaperPart = getCheaperPart <$> partA <*> partB
+  printMaybePart cheaperPart
