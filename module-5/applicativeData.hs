@@ -24,3 +24,15 @@ main = do
   putStrLn "Enter nickname, user ID, score"
   user <- User <$> getLine <*> readInt <*> readInt
   print user
+
+testNames :: [String]
+testNames = ["John Smith", "Robert'); DROP TABLE Students;--", "Kristina NULL", "Randel Monro"]
+
+testIds :: [Int]
+testIds = [1337, 0123, 999999]
+
+testScores :: [Int]
+testScores = [0, 10000, -99999]
+
+testData :: [User]
+testData = User <$> testNames <*> testIds <*> testScores
