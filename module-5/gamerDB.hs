@@ -84,6 +84,14 @@ nameStatement name = "Hello, " ++ name ++ "!"
 helloName :: IO ()
 helloName = askForName >> getLine >>= (return . nameStatement) >>= putStrLn
 
+-- helloName = askForName >> nameStatement <$> getLine >>= putStrLn
+
+helloNameDo :: IO ()
+helloNameDo = do
+  askForName
+  name <- getLine
+  putStrLn $ nameStatement name
+
 plus2IO :: (Num a) => a -> IO a
 plus2IO = return . (+ 2)
 
