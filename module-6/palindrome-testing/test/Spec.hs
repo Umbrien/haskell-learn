@@ -3,6 +3,7 @@ import Data.Text as T
 import Data.Text.IO as TIO
 import Lib (isPalindrome, preprocess)
 import Test.QuickCheck (Args (maxSuccess), quickCheck, quickCheckWith, stdArgs)
+-- quickcheck-instances
 import Test.QuickCheck.Instances ()
 
 -- Invariant property
