@@ -7,8 +7,4 @@ import qualified Data.ByteString.Base16 as B16
 type Hash = String
 
 hash :: String -> Hash
-hash input = hexhash
-    where
-        inputByteString = BC.pack input
-        hashedByteString = SHA256.hash inputByteString
-        hexhash = BC.unpack $ B16.encode hashedByteString
+hash = BC.unpack . B16.encode . SHA256.hash . BC.pack
